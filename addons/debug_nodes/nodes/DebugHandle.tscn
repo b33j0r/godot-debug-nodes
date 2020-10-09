@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=2]
+
+[sub_resource type="SpatialMaterial" id=2]
+flags_transparent = true
+albedo_color = Color( 0.968627, 0, 1, 0.498039 )
+
+[sub_resource type="SphereMesh" id=1]
+radius = 0.05
+height = 0.1
+radial_segments = 16
+rings = 8
+
+[node name="DebugHandle" type="MeshInstance"]
+material_override = SubResource( 2 )
+mesh = SubResource( 1 )
+material/0 = null
