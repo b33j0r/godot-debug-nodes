@@ -9,12 +9,18 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "Resource",
+"class": "DebugArrowStyle",
+"language": "GDScript",
+"path": "res://addons/debug_nodes/scripts/DebugArrowStyle.gd"
+}, {
 "base": "Spatial",
 "class": "DebugSpatial",
 "language": "GDScript",
 "path": "res://addons/debug_nodes/scripts/DebugSpatial.gd"
 } ]
 _global_script_class_icons={
+"DebugArrowStyle": "",
 "DebugSpatial": ""
 }
 

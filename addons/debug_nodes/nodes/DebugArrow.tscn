@@ -1,6 +1,7 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://addons/debug_nodes/scripts/DebugArrow.gd" type="Script" id=1]
+[ext_resource path="res://addons/debug_nodes/styles/DebugArrowStyle_Default.tres" type="Resource" id=2]
 
 [sub_resource type="SpatialMaterial" id=1]
 resource_local_to_scene = true
@@ -8,39 +9,55 @@ flags_transparent = true
 params_diffuse_mode = 4
 albedo_color = Color( 1, 0, 0, 1 )
 
-[sub_resource type="CylinderMesh" id=2]
+[sub_resource type="SphereMesh" id=2]
+radius = 0.01
+height = 0.02
+
+[sub_resource type="SpatialMaterial" id=3]
 resource_local_to_scene = true
-top_radius = 0.025
-bottom_radius = 0.025
-height = 0.85
+flags_transparent = true
+params_diffuse_mode = 4
+params_depth_draw_mode = 1
+albedo_color = Color( 1, 0, 0, 1 )
+
+[sub_resource type="CylinderMesh" id=4]
+resource_local_to_scene = true
+top_radius = 0.01
+bottom_radius = 0.01
+height = 0.96
 
 [sub_resource type="SpatialMaterial" id=5]
 resource_local_to_scene = true
 flags_transparent = true
 params_diffuse_mode = 4
+params_depth_draw_mode = 1
 albedo_color = Color( 1, 0, 0, 1 )
 
-[sub_resource type="CylinderMesh" id=4]
+[sub_resource type="CylinderMesh" id=6]
 resource_local_to_scene = true
 top_radius = 0.001
-bottom_radius = 0.075
-height = 0.15
+bottom_radius = 0.02
+height = 0.04
 
 [node name="DebugArrow" type="Spatial"]
 transform = Transform( -1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0 )
 script = ExtResource( 1 )
+style = ExtResource( 2 )
 vector = Vector3( 0, 1, 0 )
 
-[node name="Pivot" type="Spatial" parent="."]
-
-[node name="Shaft" type="MeshInstance" parent="Pivot"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.425, 0 )
+[node name="Pivot" type="MeshInstance" parent="."]
 material_override = SubResource( 1 )
 mesh = SubResource( 2 )
+material/0 = null
+
+[node name="Shaft" type="MeshInstance" parent="Pivot"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.48, 0 )
+material_override = SubResource( 3 )
+mesh = SubResource( 4 )
 material/0 = null
 
 [node name="Tip" type="MeshInstance" parent="Pivot/Shaft"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0 )
 material_override = SubResource( 5 )
-mesh = SubResource( 4 )
+mesh = SubResource( 6 )
 material/0 = null

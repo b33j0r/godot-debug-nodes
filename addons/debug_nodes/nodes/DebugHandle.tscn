@@ -1,16 +1,19 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
-[sub_resource type="SpatialMaterial" id=2]
+[ext_resource path="res://addons/debug_nodes/scripts/DebugHandle.gd" type="Script" id=1]
+
+[sub_resource type="SpatialMaterial" id=1]
 flags_transparent = true
 albedo_color = Color( 0.968627, 0, 1, 0.498039 )
 
-[sub_resource type="SphereMesh" id=1]
+[sub_resource type="SphereMesh" id=2]
 radius = 0.05
 height = 0.1
 radial_segments = 16
 rings = 8
 
 [node name="DebugHandle" type="MeshInstance"]
-material_override = SubResource( 2 )
-mesh = SubResource( 1 )
+material_override = SubResource( 1 )
+mesh = SubResource( 2 )
 material/0 = null
+script = ExtResource( 1 )

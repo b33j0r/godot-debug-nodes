@@ -1,69 +1,93 @@
 tool
 extends DebugSpatial
 
-export(Vector3) var vector = Vector3.FORWARD setget set_vector
-export(Color) var color = Color.red setget set_color
-export(float) var shaft_radius = 0.025 setget set_shaft_radius
-export(float) var tip_ratio = 3.0 setget set_tip_ratio
+const default_style = preload("res://addons/debug_nodes/styles/DebugArrowStyle_Default.tres")
 
-onready var pivot: Spatial = $Pivot
+export(Vector3) var vector = Vector3.FORWARD setget set_vector
+export(float) var vector_scale = 1.0 setget set_vector_scale
+
+export(Resource) var style setget set_style
+export(Color) var color = Color.transparent setget set_color
+
+onready var pivot: MeshInstance = $Pivot
 onready var shaft: MeshInstance = $Pivot/Shaft
 onready var tip: MeshInstance = $Pivot/Shaft/Tip
+onready var handle: Spatial = get_node_or_null("DebugHandle")
+
+func set_style(value):
+	if style:
+		style.disconnect("style_changed", self, "_on_style_changed")
+	style = value
+	if style:
+		style.connect("style_changed", self, "_on_style_changed")
+	_on_style_changed()
+	_update_deferred()
 
 func set_vector(value):
 	vector = value
-	call_deferred("_sync_handle")
+	_sync_handle()
 	_update_deferred()
+
+func set_vector_scale(value):
+	vector_scale = value
+	_sync_handle()
+	_update_deferred()
+
+func _on_style_changed():
+	_update_deferred()
+
+func _on_handle_origin_changed(origin):
+	if _dirty or self.vector.is_equal_approx(origin):
+		return
+	self.vector = origin
 
 func set_color(value):
 	color = value
 	_update_deferred()
 
-func set_shaft_radius(value):
-	shaft_radius = value
-	_update_deferred()
-
-func set_tip_ratio(value):
-	tip_ratio = value
-	_update_deferred()
-
-func get_tip_size() -> float:
-	return shaft_radius * tip_ratio
-
-func _process(_delta):
-	var handle: Spatial = get_node_or_null("DebugHandle")
-	if not handle:
-		return
-	call_deferred("set_vector", handle.transform.origin)
+func _ready():
+	if not style:
+		style = default_style
+	._ready()
 
 func _update():
+	if not pivot:
+		return
 	_update_mesh()
 	_update_transform()
 
 func _sync_handle():
+	if _dirty:
+		return
 	var handle: Spatial = get_node_or_null("DebugHandle")
 	if not handle:
 		return
-	handle.transform.origin = vector
+	handle.transform.origin = self.vector * vector_scale
 
 func _update_mesh():
-	if not pivot:
+	if not style:
 		return
-	var length = vector.length()
-	var tip_size = get_tip_size()
+	var length = self.vector.length() * vector_scale
+	var tip_height = style.tip_height * style.scale
+	var shaft_height = max(0, length - tip_height)
+	var shaft_radius = style.shaft_radius * style.scale
+	var tip_radius = style.tip_radius * style.scale
+	
+	tip.mesh.height = tip_height
+	shaft.mesh.height = shaft_height
+	shaft.transform.origin.y = shaft_height / 2.0
+	tip.transform.origin.y = (shaft_height + tip_height) / 2.0
+	
 	shaft.mesh.top_radius = shaft_radius
 	shaft.mesh.bottom_radius = shaft_radius
-	tip.mesh.bottom_radius = tip_size
-	tip.mesh.height = tip_size * 2.0
+	tip.mesh.bottom_radius = tip_radius
+	pivot.mesh.radius = shaft_radius
+	pivot.mesh.height = shaft_radius * 2.0
 	
-	shaft.mesh.height = length - tip.mesh.height
-	shaft.transform.origin.y = shaft.mesh.height / 2.0
-	tip.transform.origin.y = (shaft.mesh.height + tip.mesh.height) / 2.0
-
-	var shaft_material: SpatialMaterial = shaft.material_override
-	var tip_material: SpatialMaterial = tip.material_override
-	shaft_material.albedo_color = color
-	tip_material.albedo_color = color
+	var albedo_color = color if color != Color.transparent else style.color
+	pivot.material_override.albedo_color = albedo_color
+	shaft.material_override.albedo_color = albedo_color
+	tip.material_override.albedo_color = albedo_color
 
 func _update_transform():
 	var y0 = Vector3.UP

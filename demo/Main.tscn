@@ -6,14 +6,7 @@
 [node name="Main" type="Spatial"]
 
 [node name="DebugArrow" parent="." instance=ExtResource( 1 )]
-vector = Vector3( -0.439607, 1.41324, -0.080837 )
+vector = Vector3( 0.34, 2, 0 )
 
 [node name="DebugHandle" parent="DebugArrow" instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.439607, 1.41324, -0.080837 )
-
-[node name="DebugArrow2" parent="." instance=ExtResource( 1 )]
-vector = Vector3( 1.38922, 1, 0 )
-color = Color( 0.0784314, 0, 1, 1 )
-
-[node name="DebugHandle" parent="DebugArrow2" instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.38922, 1, 0 )
+transform = Transform( 0.05, 0, 0, 0, 0.05, 0, 0, 0, 0.05, 0.34, 2, 0 )

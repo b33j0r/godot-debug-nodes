@@ -1,0 +1,11 @@
+[gd_resource type="Resource" load_steps=2 format=2]
+
+[ext_resource path="res://addons/debug_nodes/scripts/DebugArrowStyle.gd" type="Script" id=1]
+
+[resource]
+script = ExtResource( 1 )
+color = Color( 1, 0, 0, 1 )
+shaft_radius = 1.0
+tip_radius = 2.0
+tip_height = 4.0
+scale = 0.05
