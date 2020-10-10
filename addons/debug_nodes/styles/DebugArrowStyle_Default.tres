@@ -8,4 +8,4 @@ color = Color( 1, 0, 0, 1 )
 shaft_radius = 1.0
 tip_radius = 2.0
 tip_height = 4.0
-scale = 0.05
+scale = 0.005

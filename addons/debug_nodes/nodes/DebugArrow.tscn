@@ -10,8 +10,8 @@ params_diffuse_mode = 4
 albedo_color = Color( 1, 0, 0, 1 )
 
 [sub_resource type="SphereMesh" id=2]
-radius = 0.01
-height = 0.02
+radius = 0.05
+height = 0.1
 
 [sub_resource type="SpatialMaterial" id=3]
 resource_local_to_scene = true
@@ -22,9 +22,9 @@ albedo_color = Color( 1, 0, 0, 1 )
 
 [sub_resource type="CylinderMesh" id=4]
 resource_local_to_scene = true
-top_radius = 0.01
-bottom_radius = 0.01
-height = 0.96
+top_radius = 0.05
+bottom_radius = 0.05
+height = 0.8
 
 [sub_resource type="SpatialMaterial" id=5]
 resource_local_to_scene = true
@@ -36,14 +36,13 @@ albedo_color = Color( 1, 0, 0, 1 )
 [sub_resource type="CylinderMesh" id=6]
 resource_local_to_scene = true
 top_radius = 0.001
-bottom_radius = 0.02
-height = 0.04
+bottom_radius = 0.1
+height = 0.2
 
 [node name="DebugArrow" type="Spatial"]
-transform = Transform( -1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0 )
 script = ExtResource( 1 )
-style = ExtResource( 2 )
 vector = Vector3( 0, 1, 0 )
+style = ExtResource( 2 )
 
 [node name="Pivot" type="MeshInstance" parent="."]
 material_override = SubResource( 1 )
@@ -51,7 +50,7 @@ mesh = SubResource( 2 )
 material/0 = null
 
 [node name="Shaft" type="MeshInstance" parent="Pivot"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.48, 0 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0 )
 material_override = SubResource( 3 )
 mesh = SubResource( 4 )
 material/0 = null

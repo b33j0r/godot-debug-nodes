@@ -12,34 +12,29 @@ export(Color) var color = Color.transparent setget set_color
 onready var pivot: MeshInstance = $Pivot
 onready var shaft: MeshInstance = $Pivot/Shaft
 onready var tip: MeshInstance = $Pivot/Shaft/Tip
-onready var handle: Spatial = get_node_or_null("DebugHandle")
+
+var _handle: Spatial
+var enabled = false
 
 func set_style(value):
 	if style:
 		style.disconnect("style_changed", self, "_on_style_changed")
 	style = value
-	if style:
+	if not style.is_connected("style_changed", self, "_on_style_changed"):
 		style.connect("style_changed", self, "_on_style_changed")
 	_on_style_changed()
 	_update_deferred()
 
 func set_vector(value):
 	vector = value
-	_sync_handle()
 	_update_deferred()
 
 func set_vector_scale(value):
 	vector_scale = value
-	_sync_handle()
 	_update_deferred()
 
 func _on_style_changed():
 	_update_deferred()
-
-func _on_handle_origin_changed(origin):
-	if _dirty or self.vector.is_equal_approx(origin):
-		return
-	self.vector = origin
 
 func set_color(value):
 	color = value
@@ -56,16 +51,8 @@ func _update():
 	_update_mesh()
 	_update_transform()
 
-func _sync_handle():
-	if _dirty:
-		return
-	var handle: Spatial = get_node_or_null("DebugHandle")
-	if not handle:
-		return
-	handle.transform.origin = self.vector * vector_scale
-
 func _update_mesh():
-	if not style:
+	if not style or not pivot:
 		return
 	var length = self.vector.length() * vector_scale
 	var tip_height = style.tip_height * style.scale
@@ -90,16 +77,37 @@ func _update_mesh():
 	tip.material_override.albedo_color = albedo_color
 
 func _update_transform():
-	var y0 = Vector3.UP
-	var y1 = vector.normalized()
-	var y_dot = y0.dot(y1)
-	if is_equal_approx(y_dot, 1.0):
-		pivot.transform.basis = Basis.IDENTITY
+	pivot.transform.basis = DebugNodes.look_along(vector)
+
+func attach_handle(handle):
+	if _handle:
+		push_error("attach_handle called without detaching an existing handle first")
 		return
-	elif is_equal_approx(y_dot, -1.0):
-		pivot.transform.basis = Basis.IDENTITY.rotated(Vector3.RIGHT, PI)
-		return
-	var x1 = -y0.cross(y1).normalized()
-	var z1 = x1.cross(y1).normalized()
+	handle.transform.origin = vector * vector_scale
+	handle.last_origin = handle.transform.origin
+	handle.connect("origin_changed", self, "_on_handle_origin_changed")
 	
-	pivot.transform.basis = Basis(x1, y1, z1)
+	style.connect("style_changed", handle, "_on_style_changed")
+	style.emit_signal("style_changed")
+	
+	_handle = handle
+
+func detach_handle(handle):
+	if _handle != handle:
+		push_error("detach_handle called with a handle that was never attached")
+		return
+	handle.disconnect("origin_changed", self, "_on_handle_origin_changed")
+	style.disconnect("style_changed", handle, "_on_style_changed")
+	_handle = null
+
+func _sync_handle():
+	if not _handle:
+		return
+	_handle.set_block_signals(true)
+	_handle.transform.origin = self.vector * vector_scale
+	_handle.set_block_signals(false)
+
+func _on_handle_origin_changed(origin):
+	if _dirty or self.vector.is_equal_approx(origin):
+		return
+	self.vector = origin / vector_scale

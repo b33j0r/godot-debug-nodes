@@ -8,6 +8,7 @@ func _ready():
 	_update_deferred()
 
 func _update_deferred():
+	_sync_handle()
 	if _dirty:
 		return
 	_dirty = true
@@ -20,4 +21,7 @@ func _update_and_clear_dirty():
 	_dirty = false
 
 func _update():
+	pass
+
+func _sync_handle():
 	pass
